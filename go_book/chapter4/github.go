@@ -23,14 +23,17 @@ type Package struct {
 }
 
 func main() {
+
+	//AUTH
 	context := context.Background()
 	tokenService := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: ""}, //get your own access token
+		&oauth2.Token{AccessToken: "d7625aaf56a3f98edd7206175b2b99837a3e692b"},
 	)
 	tokenClient := oauth2.NewClient(context, tokenService)
 
 	client := github.NewClient(tokenClient)
 
+	//FETCH REPO
 	repo, _, err := client.Repositories.Get(context, "arobson73", "golang")
 
 	if err != nil {
@@ -46,7 +49,7 @@ func main() {
 	}
 
 	fmt.Printf("%+v\n", pack)
-
+	//LIST COMMITS
 	commitInfo, _, err := client.Repositories.ListCommits(context, "arobson73", "golang", nil)
 
 	if err != nil {
@@ -58,6 +61,8 @@ func main() {
 	opt := &github.IssueListByRepoOptions{
 		Assignee: "arobson73",
 	}
+
+	//ISSUES BY REPO
 	iss, r, err := client.Issues.ListByRepo(context, "arobson73", "golang", opt)
 	//	iss, r, err := client.Issues.ListByRepo(context, "arobson73", "golang", nil)
 
@@ -75,7 +80,7 @@ func main() {
 
 	input := &github.IssueRequest{Title: &v}
 	//input := &IssueRequest{Title: &v}
-
+	//EDIT ISSUE
 	issnew, _, err := client.Issues.Edit(context, "arobson73", "golang", 1, input)
 	if err != nil {
 		fmt.Printf("Issues.Edit returned error: %v", err)
@@ -83,8 +88,7 @@ func main() {
 	}
 	fmt.Printf("Issue is now called %s\n", *issnew.Title)
 
-	//now do this editing via vim
-	//first get the issue
+	//EDIT ISSUE WITH VIM
 	issnew1, _, err := client.Issues.Get(context, "arobson73", "golang", 1)
 	if err != nil {
 		fmt.Printf("Problem getting issue golang number 1")
@@ -144,5 +148,29 @@ func main() {
 	}
 
 	fmt.Printf("edited title is %s \n", issnew2.GetTitle())
+
+	//CREATE ISSUE
+	input1 := &github.IssueRequest{
+		Title:    github.String("Not another issue"),
+		Body:     github.String("Some issue"),
+		Assignee: github.String("arobson73"),
+		Labels:   &[]string{"bug1", "bug2"},
+	}
+
+	issue1, _, err := client.Issues.Create(context, "arobson73", "golang", input1)
+	if err != nil {
+		fmt.Printf("Issues.Create returned error: %v", err)
+	}
+	fmt.Printf("new title is %s ", issue1.GetTitle())
+
+	//CLOSE ISSUE
+
+	input2 := &github.IssueRequest{State: github.String("closed")}
+	issue2, _, err := client.Issues.Edit(context, "arobson73", "golang", 3, input2)
+	if err != nil {
+		fmt.Printf("Issues.Edit returned error: %v", err)
+		os.Exit(1)
+	}
+	fmt.Printf("Issue state is now  %s\n", *issue2.State)
 
 }
