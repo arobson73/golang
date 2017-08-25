@@ -112,7 +112,7 @@ func main() {
 	opt := &gh.IssueListByRepoOptions{
 		Assignee: "arobson73",
 	}
-	iss, r, err := client.Issues.ListByRepo(context, "arobson73", "golang", opt)
+	iss, r, err := client.Issues.ListByRepo(context, "cavapoo2", "golang", opt)
 
 	if err != nil {
 		fmt.Printf("Issues.ListByRepo returned error: %v\n", err)
