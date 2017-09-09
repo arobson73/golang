@@ -5,11 +5,6 @@ import (
 	"unicode"
 )
 
-type matchIndex struct {
-	begin int
-	end   int
-}
-
 func reverse(in string) string {
 
 	res := []rune(in)
@@ -26,7 +21,7 @@ func doubleLength(in string) string {
 func expand(in string, f func(string) string) string {
 
 	fmt.Println("in:", in)
-	//get the indexes of the substrings
+	//internal expand function
 	exp := func(in string) string {
 
 		var start bool = false
