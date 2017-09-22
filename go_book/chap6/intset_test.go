@@ -108,6 +108,24 @@ func Test_AddAll(t *testing.T) {
 
 }
 
+func Test_Union(t *testing.T) {
+	var x IntSet
+	x.Add(100)
+	x.Add(200)
+	x.Add(300)
+	x.Add(500)
+	fmt.Println("Testing Union")
+	fmt.Println(&x)
+	var y IntSet
+	y.Add(222)
+	y.Add(333)
+	y.Add(444)
+	fmt.Println(&y)
+	x.UnionWith(&y)
+	fmt.Println(&x)
+
+}
+
 func Test_IntersectWith(t *testing.T) {
 	var x IntSet
 	x.Add(100)
@@ -119,6 +137,23 @@ func Test_IntersectWith(t *testing.T) {
 	y.Add(333)
 	fmt.Println("Testing IntersectWith")
 	fmt.Println(&x) // "{100 200 300}"
+	fmt.Println(&y) // "{200 333 600}"
+	x.IntersectWith(&y)
+	fmt.Println(&x) // "{200}"
+
+}
+func Test_IntersectWith2(t *testing.T) {
+	var x IntSet
+	x.Add(100)
+	x.Add(200)
+	x.Add(300)
+	x.Add(400)
+	var y IntSet
+	y.Add(200)
+	y.Add(600)
+	y.Add(333)
+	fmt.Println("Testing IntersectWith2")
+	fmt.Println(&x) // "{100 200 300 400}"
 	fmt.Println(&y) // "{200 333 600}"
 	x.IntersectWith(&y)
 	fmt.Println(&x) // "{200}"
@@ -139,5 +174,68 @@ func Test_DifferenceWith(t *testing.T) {
 	fmt.Println(&y) // "{200 333 600}"
 	x.DifferenceWith(&y)
 	fmt.Println(&x) // "{100 300}"
+
+}
+
+//try larger T set
+func Test_DifferenceWith2(t *testing.T) {
+	var x IntSet
+	x.Add(100)
+	x.Add(200)
+	x.Add(300)
+	var y IntSet
+	y.Add(200)
+	y.Add(600)
+	y.Add(333)
+	y.Add(400)
+	fmt.Println("Testing DifferenceWith2")
+	fmt.Println(&x) // "{100 200 300}"
+	fmt.Println(&y) // "{200 333 400 600}"
+	x.DifferenceWith(&y)
+	fmt.Println(&x) // "{100 300}"
+
+}
+
+//try larger T set
+func Test_DifferenceWith3(t *testing.T) {
+	var x IntSet
+	x.Add(100)
+	x.Add(200)
+	x.Add(300)
+	x.Add(400)
+	x.Add(500)
+	x.Add(5000)
+
+	var y IntSet
+	y.Add(200)
+	y.Add(600)
+	y.Add(333)
+	fmt.Println("Testing DifferenceWith3")
+	fmt.Println(&x) // "{100 200 300 400 500 5000}"
+	fmt.Println(&y) // "{200 333 600}"
+	x.DifferenceWith(&y)
+	fmt.Println(&x) // "{100 300 400 500 5000}"
+
+}
+
+func Test_SymmetricDifference(t *testing.T) {
+
+	var x IntSet
+	x.Add(100)
+	x.Add(200)
+	x.Add(300)
+	x.Add(400)
+	var y IntSet
+	y.Add(200)
+	y.Add(600)
+	y.Add(333)
+	y.Add(700)
+	y.Add(800)
+
+	fmt.Println("Testing SymmetricDifference")
+	fmt.Println(&x) // "{100 200 300 400}"
+	fmt.Println(&y) // "{200 333 600 700}"
+	x.SymetricDifference(&y)
+	fmt.Println(&x) // "{100 300 400 U 600 333 700} => {100 300 333 400 600 700}"
 
 }

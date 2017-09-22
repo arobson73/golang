@@ -103,17 +103,24 @@ func (s *IntSet) IntersectWith(t *IntSet) {
 		}
 	}
 }
+
+//DifferenceWith S\T => 1010 \ 1001 => 0010
 func (s *IntSet) DifferenceWith(t *IntSet) {
 	for i, word := range t.words {
 		if i < len(s.words) && word != 0 {
-			for j := 0; j < 64; j++ {
-
-				if ((word & (1 << uint(j))) != 0) && s.Has(i*64+j) {
-					s.Remove(i*64 + j)
-				}
-			}
+			s.words[i] &^= word
 		}
 	}
+}
+
+//symmetric difference S\T U T\S
+func (s *IntSet) SymetricDifference(t *IntSet) {
+
+	c := t.Copy()       // copy contents of t
+	t.DifferenceWith(s) // mutate t
+	s.DifferenceWith(c) // mutate s
+	s.UnionWith(t)      //union
+
 }
 
 //!-intset
