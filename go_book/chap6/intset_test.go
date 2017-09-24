@@ -239,3 +239,23 @@ func Test_SymmetricDifference(t *testing.T) {
 	fmt.Println(&x) // "{100 300 400 U 600 333 700} => {100 300 333 400 600 700}"
 
 }
+
+func Test_Elems(t *testing.T) {
+	var x IntSet
+	x.Add(124)
+	x.Add(546)
+	x.Add(678)
+	x.Add(321)
+	x.Add(1111)
+	x.Add(213)
+
+	fmt.Println("Testing Test_Elems")
+	fmt.Println(&x)
+
+	d := x.Elems()
+	fmt.Println("data in the set is :")
+	for _, v := range d {
+		fmt.Print(" ", v)
+	}
+	fmt.Println()
+}

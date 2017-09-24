@@ -11,23 +11,25 @@ import (
 	"fmt"
 )
 
+const BitSize = 32 << (^uint(0) >> 63)
+
 //!+intset
 
 // An IntSet is a set of small non-negative integers.
 // Its zero value represents the empty set.
 type IntSet struct {
-	words []uint64
+	words []uint
 }
 
 // Has reports whether the set contains the non-negative value x.
 func (s *IntSet) Has(x int) bool {
-	word, bit := x/64, uint(x%64)
+	word, bit := x/BitSize, uint(x%BitSize)
 	return word < len(s.words) && s.words[word]&(1<<bit) != 0
 }
 
 // Add adds the non-negative value x to the set.
 func (s *IntSet) Add(x int) {
-	word, bit := x/64, uint(x%64)
+	word, bit := x/BitSize, uint(x%BitSize)
 	for word >= len(s.words) {
 		s.words = append(s.words, 0)
 	}
@@ -53,7 +55,7 @@ func (s *IntSet) Len() int {
 		if word == 0 {
 			continue
 		}
-		for j := 0; j < 64; j++ {
+		for j := 0; j < BitSize; j++ {
 			if word&(1<<uint(j)) != 0 {
 				count++
 			}
@@ -65,11 +67,11 @@ func (s *IntSet) Len() int {
 
 //remove value
 func (s *IntSet) Remove(x int) {
-	word, bit := x/64, uint(x%64)
+	word, bit := x/BitSize, uint(x%BitSize)
 	if word >= len(s.words) {
 		return
 	}
-	var mask uint64 = ^(1 << bit)
+	var mask uint = ^(1 << bit)
 	s.words[word] &= mask
 }
 
@@ -83,7 +85,7 @@ func (s *IntSet) Clear() {
 //copy
 func (s *IntSet) Copy() *IntSet {
 	n := &IntSet{}
-	n.words = make([]uint64, len(s.words))
+	n.words = make([]uint, len(s.words))
 	copy(n.words, s.words)
 	return n
 }
@@ -123,6 +125,22 @@ func (s *IntSet) SymetricDifference(t *IntSet) {
 
 }
 
+//Elems
+func (s *IntSet) Elems() []int {
+	data := make([]int, 0)
+	for i, word := range s.words {
+		if word != 0 {
+			for j := 0; j < BitSize; j++ {
+				if (word & (1 << uint(j))) != 0 {
+					data = append(data, i*BitSize+j)
+				}
+			}
+		}
+	}
+	return data
+
+}
+
 //!-intset
 
 //!+string
@@ -135,12 +153,12 @@ func (s *IntSet) String() string {
 		if word == 0 {
 			continue
 		}
-		for j := 0; j < 64; j++ {
+		for j := 0; j < BitSize; j++ {
 			if word&(1<<uint(j)) != 0 {
 				if buf.Len() > len("{") {
 					buf.WriteByte(' ')
 				}
-				fmt.Fprintf(&buf, "%d", 64*i+j)
+				fmt.Fprintf(&buf, "%d", BitSize*i+j)
 			}
 		}
 	}
