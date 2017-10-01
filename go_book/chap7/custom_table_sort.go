@@ -72,10 +72,7 @@ func sortByMostClicked(top string) {
 
 }
 
-func main() {
-	printTracks(tracks)
-	clicks := []string{"Title", "Year", "Length", "Artist"}
-	//shuffle
+func shuffleTracks(choice []string) {
 	rand.Seed(time.Now().UTC().UnixNano())
 	//	dest := make([]string, len(clicks))
 	//	perm := rand.Perm(len(clicks))
@@ -83,10 +80,19 @@ func main() {
 		for i, v := range perm {
 			dest[v] = clicks[i]
 		}*/
-	for i := range clicks {
-		j := rand.Intn(len(clicks))
-		clicks[i], clicks[j] = clicks[j], clicks[i]
+	for i := range choice {
+		j := rand.Intn(len(choice))
+		choice[i], choice[j] = choice[j], choice[i]
 	}
+	return
+
+}
+
+func main() {
+	printTracks(tracks)
+	clicks := []string{"Title", "Year", "Length", "Artist"}
+	//shuffle
+	shuffleTracks(clicks)
 	println("")
 	println("Sort by ", clicks[0])
 	sortByMostClicked(clicks[0])
