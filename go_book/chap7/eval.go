@@ -59,6 +59,8 @@ func (c call) Eval(env Env) float64 {
 	switch c.fn {
 	case "pow":
 		return math.Pow(c.args[0].Eval(env), c.args[1].Eval(env))
+	case "min":
+		return math.Min(c.args[0].Eval(env), c.args[1].Eval(env)) //surelt this is a simpler way to compute min
 	case "sin":
 		return math.Sin(c.args[0].Eval(env))
 	case "sqrt":
