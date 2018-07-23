@@ -2,8 +2,8 @@ package rest
 
 import (
 	"net/http"
-
-	"github.com/PacktPublishing/Cloud-Native-programming-with-Golang/Chapter02/myevents/src/lib/persistence"
+	//will need to edit this path depending on your code location
+	"github.com/rest_with_mongo/myevents/src/lib/persistence"
 
 	"github.com/gorilla/mux"
 )
