@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 	//will need to edit these paths depending on your path location
-	"github.com/rest_with_mongo/myevents/src/eventsservice/rest"
-	"github.com/rest_with_mongo/myevents/src/lib/configuration"
-	"github.com/rest_with_mongo/myevents/src/lib/persistence/dblayer"
+	"github.com/rest_with_mongo/rest"
+	"github.com/rest_with_mongo/lib/configuration"
+	"github.com/rest_with_mongo/lib/persistence/dblayer"
 )
 
 func main() {
