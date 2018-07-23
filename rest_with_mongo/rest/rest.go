@@ -3,7 +3,7 @@ package rest
 import (
 	"net/http"
 	//will need to edit this path depending on your code location
-	"github.com/rest_with_mongo/myevents/src/lib/persistence"
+	"github.com/rest_with_mongo/lib/persistence"
 
 	"github.com/gorilla/mux"
 )
