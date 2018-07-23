@@ -4,10 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"log"
-
-	"github.com/PacktPublishing/Cloud-Native-programming-with-Golang/Chapter02/myevents/src/eventsservice/rest"
-	"github.com/PacktPublishing/Cloud-Native-programming-with-Golang/Chapter02/myevents/src/lib/configuration"
-	"github.com/PacktPublishing/Cloud-Native-programming-with-Golang/Chapter02/myevents/src/lib/persistence/dblayer"
+	//will need to edit these paths depending on your path location
+	"github.com/rest_with_mongo/myevents/src/eventsservice/rest"
+	"github.com/rest_with_mongo/myevents/src/lib/configuration"
+	"github.com/rest_with_mongo/myevents/src/lib/persistence/dblayer"
 )
 
 func main() {
