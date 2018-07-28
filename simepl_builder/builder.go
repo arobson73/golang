@@ -34,13 +34,20 @@ func main() {
 		"cd /home/febe/go/src/andy/booking/eventService && go build main.go",
 	}
 	for _, p := range installPaths {
-		//	out, err := exec.Command("/bin/bash", "-c", p).Output()
-		cmd := exec.Command("/bin/bash", "-c", p)
-		err := cmd.Run()
-		if err != nil {
-			log.Println("Error running cd with path")
-			continue
-		}
+		execCommand(p)
+	}
+	for _, p := range buildPaths {
+		execCommand(p)
+	}
+
+}
+
+func execCommand(c string) {
+	//	out, err := exec.Command("/bin/bash", "-c", p).Output()
+	cmd := exec.Command("/bin/bash", "-c", c)
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal("Error running command")
 	}
 
 }
