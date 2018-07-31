@@ -1,0 +1,1 @@
+{"id":"5b603230ad7545340cd990f0","Name":"cinema","Duration":120,"StartDate":1533132000,"EndDate":1533142800,"Location":{"id":"5b603230ad7545340cd990f4","Name":"Odeon","Address":"Guildford","Country":"UK","OpenTime":14,"CloseTime":17,"Halls":[{"name":"Screen 1","location":"Guildford Odeon","capacity":300},{"name":"Screen 2","location":"Guildford Odeon","capacity":300}]}}

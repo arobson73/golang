@@ -1,0 +1,4 @@
+#!/bin/bash
+
+curl -i http://localhost:8181/locations
+

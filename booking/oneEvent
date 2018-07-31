@@ -1,0 +1,6 @@
+#!/bin/bash
+#supply the id to show the event e.g
+#curl -i http://localhost:8181/events/event_id
+#bash call
+#./oneEvent some_id
+curl -i http://localhost:8181/events/$1

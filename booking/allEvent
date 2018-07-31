@@ -1,0 +1,4 @@
+#!/bin/bash
+#bash call ./allEvent
+
+curl -i http://localhost:8181/events
