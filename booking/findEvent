@@ -1,0 +1,15 @@
+#!/bin/bash
+#$1 is search criteria (either id or name)
+#$2 is the id or event name e.g
+# http://localhost:8181/id/1234
+# http://localhost:8181/name/opera%20aida
+
+#typical bash call ./findEvent name "opera%20aida"
+#note %20 is space
+
+#debug
+#echo $1
+#echo $2
+#echo http://localhost:8181/events/$1/$2
+
+curl -i http://localhost:8181/events/$1/$2
