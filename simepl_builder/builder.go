@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"log"
 	"os/exec"
 )
@@ -45,9 +47,13 @@ func main() {
 func execCommand(c string) {
 	//	out, err := exec.Command("/bin/bash", "-c", p).Output()
 	cmd := exec.Command("/bin/bash", "-c", c)
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
-		log.Fatal("Error running command")
+		log.Fatal(fmt.Sprint(err) + ":  " + stderr.String())
 	}
 
 }
