@@ -19,7 +19,7 @@ type EventProcessor struct {
 func (p *EventProcessor) ProcessEvents() {
 	log.Println("listening or events")
 
-	received, errors, err := p.EventListener.Listen("eventCreated")
+	received, errors, err := p.EventListener.Listen("eventCreated", "userCreated")
 
 	if err != nil {
 		panic(err)
@@ -39,7 +39,7 @@ func (p *EventProcessor) ProcessEvents() {
 func (p *EventProcessor) handleEvent(event msgqueue.Event) {
 	switch e := event.(type) {
 	case *contracts.EventCreatedEvent:
-		log.Printf("event %s created: %s", e.ID, e)
+		log.Printf("event %s created: %s\n", e.ID, e.Name)
 
 		if !bson.IsObjectIdHex(e.ID) {
 			log.Printf("event %v did not contain valid object ID", e)
@@ -47,6 +47,15 @@ func (p *EventProcessor) handleEvent(event msgqueue.Event) {
 		}
 
 		p.Database.AddEvent(persistence.Event{ID: bson.ObjectIdHex(e.ID), Name: e.Name})
+	case *contracts.UserCreatedEvent:
+		log.Printf("event %s created: %s\n", e.ID, e.First)
+		if !bson.IsObjectIdHex(e.ID) {
+			log.Printf("event %v did not contain valid object ID", e)
+			return
+		}
+
+		p.Database.AddUser(persistence.User{ID: bson.ObjectIdHex(e.ID), First: e.First, Last: e.Last, Age: e.Age, Bookings: e.Bookings})
+
 	case *contracts.LocationCreatedEvent:
 		log.Printf("location %s created: %v", e.ID, e)
 		// TODO: No persistence for locations, yet
