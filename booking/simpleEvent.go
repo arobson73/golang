@@ -35,6 +35,20 @@ type Event struct {
 	Location  Location
 }
 
+type Booking struct {
+	Date    int64
+	EventID []byte
+	Seats   int
+}
+
+type User struct {
+	ID       bson.ObjectId `bson:"_id"`
+	First    string
+	Last     string
+	Age      int
+	Bookings []Booking
+}
+
 func main() {
 	//4 events as follows:
 	eventNames := []string{"music gig", "cinema", "football match", "olympics"}
@@ -42,6 +56,18 @@ func main() {
 	eventStartDates := []int64{(time.Date(2018, 7, 30, 12, 0, 0, 0, time.UTC)).Unix(), (time.Date(2018, 8, 1, 14, 0, 0, 0, time.UTC).Unix()), (time.Date(2018, 8, 2, 15, 0, 0, 0, time.UTC)).Unix(), (time.Date(2018, 8, 3, 12, 0, 0, 0, time.UTC)).Unix()}
 	eventEndDate := []int64{(time.Date(2018, 7, 30, 23, 30, 0, 0, time.UTC)).Unix(), (time.Date(2018, 8, 1, 17, 0, 0, 0, time.UTC).Unix()), (time.Date(2018, 8, 2, 16, 45, 0, 0, time.UTC)).Unix(), (time.Date(2018, 8, 3, 22, 30, 0, 0, time.UTC)).Unix()}
 	eventIDs := []bson.ObjectId{bson.NewObjectId(), bson.NewObjectId(), bson.NewObjectId(), bson.NewObjectId()}
+	for _, v := range eventIDs {
+		fmt.Printf("+%v \n", v)
+	}
+	/*
+		e0, _ := eventIDs[0].MarshalText()
+		e1, _ := eventIDs[1].MarshalText()
+		e2, _ := eventIDs[2].MarshalText()
+		e3, _ := eventIDs[3].MarshalText()
+			eventIDsBytes := [][]byte{e0, e1, e2, e3}
+	*/
+	//	b2, _ := b1.MarshalText()
+	//eventIDSAsBytes := [][]bytes{eventIDs[0].MarshalText(), eventIDs[1].MarshalText(), eventIDs[2].MarshalText(), eventIDs[3].MarshalText()}
 	locationIDs := []bson.ObjectId{bson.NewObjectId(), bson.NewObjectId(), bson.NewObjectId(), bson.NewObjectId()}
 	locationName := []string{"Wembly", "Odeon", "Madjeski Stadium", "London Olympic Track"}
 	locationAddress := []string{"London", "Guildford", "Reading", "East London"}
@@ -56,6 +82,25 @@ func main() {
 
 	events := []Event{}
 	locs := []Location{}
+	//users with no bookings, can add booking via rest instead
+	users := []User{
+		{bson.NewObjectId(), "Jim", "Smith", 22, []Booking{
+			/*
+				{eventStartDates[0], eventIDsBytes[0], 2},
+				{eventStartDates[1], eventIDsBytes[1], 3}*/},
+		},
+		{bson.NewObjectId(), "Paul", "Jones", 44, []Booking{ /*
+				{eventStartDates[2], eventIDsBytes[2], 2}*/},
+		},
+		{bson.NewObjectId(), "Frank", "Roberts", 31, []Booking{ /*
+				{eventStartDates[3], eventIDsBytes[3], 1}*/},
+		},
+		{bson.NewObjectId(), "Gale", "Moor", 28, []Booking{ /*
+				{eventStartDates[1], eventIDsBytes[1], 4},
+				{eventStartDates[2], eventIDsBytes[2], 2},
+				{eventStartDates[3], eventIDsBytes[3], 3}*/},
+		},
+	}
 	for i := 0; i < len(eventNames); i++ {
 		var event Event
 		event.ID = eventIDs[i]
@@ -105,6 +150,25 @@ func main() {
 			fmt.Println("error:", err)
 		}
 		name := "loc"
+		num := strconv.Itoa(i)
+		name += num + ".json"
+		//name = append(name, num)
+
+		fo, errf := os.Create(name)
+		if errf != nil {
+			panic(err)
+		}
+		defer fo.Close()
+		fmt.Fprintf(fo, string(data[:]))
+
+	}
+	//create some users with booking
+	for i := 0; i < len(users); i++ {
+		data, err := json.Marshal(users[i])
+		if err != nil {
+			fmt.Println("error:", err)
+		}
+		name := "user"
 		num := strconv.Itoa(i)
 		name += num + ".json"
 		//name = append(name, num)
