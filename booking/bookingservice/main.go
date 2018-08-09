@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"time"
 
 	"andy/booking/bookingservice/listener"
 	"andy/booking/bookingservice/rest"
@@ -42,6 +43,11 @@ func main() {
 	case "amqp":
 		log.Println("BookingService: messageBrokerType=amqp")
 		conn, err := amqp.Dial(config.AMQPMessageBroker)
+		if err != nil {
+			time.Sleep(10 * time.Second)
+			conn, err = amqp.Dial(config.AMQPMessageBroker)
+		}
+
 		panicIfErr(err)
 
 		eventListener, err = msgqueue_amqp.NewAMQPEventListener(conn, "events", "booking")
