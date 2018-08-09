@@ -1,6 +1,6 @@
 #use the simpleEvent.go to build some json input files. 
 #use the bash scripts to send GET/POST messages.
-#use the builder to build project (see other directory (simple builder)
+#use the builder to build project go files (see other directory (simple builder)
 
 first make sure you have rabbitmq setup (this is for ubuntu via docker)
 docker run --detach \
@@ -95,4 +95,19 @@ docker container run --name frontend -p 80:80 myevents/frontend
 ## Alternatively rather than using docker as above (whuch is good way to test its all working) can instead use the ##docker-compose which will build and run the whole lot in one go
 docker-compose up -d
 
+##########
+##USAGE##
+#########
+#check its all running with docker ps -a
+#use the bash script 
+newEvent outx.json 
+#to send events
+#also bash sript to send new user
+newUser userx.json
+#then you can make booking via
+makeBooking bash script.
+
+#you can view this by going to http://localhost
+
+#this is all skeleton code, front end needs login credentials to add new events / users. booking frontend buttton needs to use the user id to actually make a button which missing. TODO 
 
