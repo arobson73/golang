@@ -85,4 +85,14 @@ myevents/eventservice
 #bookingservice
 docker container run --detach --name bookings --network myevents -e AMQP_BROKER_URL=amqp://guest:guest@rabbitmq:5672/ -e MONGO_URL=mongodb://bookings-db/bookings -p 8182:8181 myevents/bookingservice
 
+#booking_front
+docker container build -t myevents/frontend .
+#then
+docker container run --name frontend -p 80:80 myevents/frontend	 
+
+
+############
+## Alternatively rather than using docker as above (whuch is good way to test its all working) can instead use the ##docker-compose which will build and run the whole lot in one go
+docker-compose up -d
+
 
