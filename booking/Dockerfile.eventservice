@@ -1,0 +1,22 @@
+FROM golang:1.9
+
+WORKDIR /go/src/andy/booking
+COPY . .
+WORKDIR eventService
+RUN \
+	go get -u github.com/Shopify/sarama && \
+	go get -u github.com/gorilla/handlers && \
+	go get -u github.com/gorilla/mux && \
+	go get -u github.com/mitchellh/mapstructure && \
+	go get -u github.com/streadway/amqp && \
+	go get -u gopkg.in/mgo.v2 && \
+	go get -u gopkg.in/mgo.v2/bson && \
+	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o eventservice
+	##go build -a -installsuffix cgo -o eventservice
+
+FROM scratch
+
+COPY --from=0 /go/src/andy/booking/eventService/eventservice /eventservice
+ENV LISTEN_URL=0.0.0.0:8181
+EXPOSE 8181
+CMD ["/eventservice"]
