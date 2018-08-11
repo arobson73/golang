@@ -14,13 +14,17 @@ services:
     image: mongo
     networks:
       - myevents
+    volumes:
+      - './data:/data/db'    
 
   bookings-db:
     image: mongo
     networks:
       - myevents
     ports:
-      - 20718:20718    
+      - 20718:20718
+    volumes:
+      - './data1:/data/db'      
 
   events:
     build:
