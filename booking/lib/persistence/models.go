@@ -10,12 +10,14 @@ type User struct {
 	ID       bson.ObjectId `bson:"_id"`
 	First    string
 	Last     string
+	Email    string
+	Password string
 	Age      int
 	Bookings []Booking
 }
 
 func (u *User) String() string {
-	return fmt.Sprintf("id: %s, first_name: %s, last_name: %s, Age: %d, Bookings: %v", u.ID, u.First, u.Last, u.Age, u.Bookings)
+	return fmt.Sprintf("id: %s, first_name: %s, last_name: %s, Age: %d, Bookings: %v", u.ID, u.First, u.Last, u.Email, u.Password, u.Age, u.Bookings)
 }
 
 type Booking struct {
@@ -23,6 +25,11 @@ type Booking struct {
 	EventID []byte
 	//EventID bson.ObjectId `bson:"_id"`
 	Seats int
+}
+
+type UserFind struct {
+	Email    string
+	Password string
 }
 
 type Event struct {
