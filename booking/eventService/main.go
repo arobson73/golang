@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"time"
 
 	"github.com/Shopify/sarama"
 
@@ -35,7 +36,14 @@ func main() {
 	switch config.MessageBrokerType {
 	case "amqp":
 		log.Println("EventService: messagebrokertype=amqp")
+
 		conn, err := amqp.Dial(config.AMQPMessageBroker)
+		if err != nil {
+
+			time.Sleep(10 * time.Second)
+			conn, err = amqp.Dial(config.AMQPMessageBroker)
+		}
+
 		if err != nil {
 			panic(err)
 		}
