@@ -82,6 +82,15 @@ func (mgoLayer *MongoDBLayer) FindUser(f string, l string) (persistence.User, er
 	//fmt.Printf("Found %v \n", u.String())
 	return u, err
 }
+func (mgoLayer *MongoDBLayer) FindUserEmailPass(e string, p string) (persistence.User, error) {
+	log.Println("mgoLayer.FindUserEmail")
+	s := mgoLayer.getFreshSession()
+	defer s.Close()
+	u := persistence.User{}
+	err := s.DB(DB).C(USERS).Find(bson.M{"email": e, "password": p}).One(&u)
+	//fmt.Printf("Found %v \n", u.String())
+	return u, err
+}
 
 func (mgoLayer *MongoDBLayer) FindBookingsForUser(id []byte) ([]persistence.Booking, error) {
 	log.Println("mgoLayer.FindBookingsForUser")
