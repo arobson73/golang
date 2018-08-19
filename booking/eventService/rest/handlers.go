@@ -28,6 +28,32 @@ func newEventHandler(databasehandler persistence.DatabaseHandler, eventEmitter m
 	}
 }
 
+//note in practive the password would be encrypted on client side, then decrypted here and send to db
+func (eh *eventServiceHandler) findUserEmailPassHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	email, ok := vars["email"]
+	if !ok {
+		fmt.Fprint(w, `No firstname found`)
+		return
+	}
+	pass, ok1 := vars["password"]
+	if !ok1 {
+		fmt.Fprint(w, `No secondname found`)
+		return
+
+	}
+
+	u := persistence.User{}
+	u, err := eh.dbhandler.FindUserEmailPass(email, pass)
+	if err != nil {
+		w.WriteHeader(404)
+		fmt.Fprintf(w, "Error occured %s", err)
+	}
+	w.Header().Set("Content-Type", "application/json;charset=utf8")
+	json.NewEncoder(w).Encode(&u)
+
+}
+
 func (eh *eventServiceHandler) findUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -226,6 +252,8 @@ func (eh *eventServiceHandler) newUserHandler(w http.ResponseWriter, r *http.Req
 		//ID:       string(user.ID),
 		First:    user.First,
 		Last:     user.Last,
+		Email:    user.Email,
+		Password: user.Password, //clearly this is not something that is passed around and probably hashed
 		Age:      user.Age,
 		Bookings: user.Bookings,
 	}

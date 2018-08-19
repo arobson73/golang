@@ -6,6 +6,7 @@ import (
 	"andy/booking/lib/msgqueue"
 	"andy/booking/lib/persistence"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -28,6 +29,8 @@ func ServeAPI(endpoint string, dbHandler persistence.DatabaseHandler, eventEmitt
 
 	userRouter.Methods("POST").Path("").HandlerFunc(handler.newUserHandler)
 	userRouter.Methods("GET").Path("/findUser/{firstname}/{secondname}").HandlerFunc(handler.findUserHandler)
+	userRouter.Methods("GET").Path("/findUserEmailPass/{email}/{password}").HandlerFunc(handler.findUserEmailPassHandler)
+	rc := handlers.CORS()(r)
 
-	return http.ListenAndServe(endpoint, r)
+	return http.ListenAndServe(endpoint, rc)
 }
