@@ -2,8 +2,9 @@ import * as React from "react";
 import {EventList} from "./event_list";
 import {Loader} from "./loader";
 import {Event} from "../model/event";
+import {RouteComponentProps} from 'react-router-dom'
 
-export interface EventListContainerProps {
+export interface EventListContainerProps extends RouteComponentProps<any> {
     eventServiceURL: string;
 }
 
@@ -21,6 +22,7 @@ export class EventListContainer extends React.Component<EventListContainerProps,
             events: []
         };
 
+  //      console.log(this.props)
         fetch(p.eventServiceURL + "/events", {method: "GET"})
             .then<Event[]>(response => response.json())
             .then(events => {
@@ -36,8 +38,11 @@ export class EventListContainer extends React.Component<EventListContainerProps,
     }
 
     render() {
+        console.log('EvenListContainer userid=',this.props.location.state.USERID)
+        
+        //console.log(this.props.location);
         return <Loader loading={this.state.loading} message="Loading events...">
-            <EventList events={this.state.events} onEventBooked={e => this.handleEventBooked(e)}/>
+            <EventList userID= {this.props.location.state.USERID} events={this.state.events} onEventBooked={e => this.handleEventBooked(e)}/>
         </Loader>
     }
 }

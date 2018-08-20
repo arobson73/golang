@@ -15,7 +15,7 @@ export interface EventBookingFormState {
 export class EventBookingForm extends React.Component<EventBookingFormProps, EventBookingFormState> {
     constructor(p: EventBookingFormProps) {
         super(p);
-
+        this.handleNewAmount = this.handleNewAmount.bind(this);    
         this.state = {
             selectedAmount: 1
         }
@@ -25,7 +25,7 @@ export class EventBookingForm extends React.Component<EventBookingFormProps, Eve
         const newState: EventBookingFormState = {
             selectedAmount: parseInt(event.target.value)
         };
-
+        console.log('newState=',newState.selectedAmount)
         this.setState(newState);
     }
 

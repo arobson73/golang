@@ -3,6 +3,7 @@ import {EventBookingForm} from "./event_booking_form";
 import {Event} from "../model/event";
 
 export interface EventBookingFormContainerProps {
+    userID:string;
     eventID: string;
     eventServiceURL: string;
     bookingServiceURL: string;
@@ -17,9 +18,12 @@ export class EventBookingFormContainer extends React.Component<EventBookingFormC
     constructor(p: EventBookingFormContainerProps) {
         super(p);
 
+	this.handleSubmit = this.handleSubmit.bind(this);
         this.state = {
             state: "loading"
         };
+
+        console.log('EventBookingContainer booking url=',this.props.bookingServiceURL);
 
         fetch(p.eventServiceURL + "/events/" + p.eventID)
             .then<Event>(resp => resp.json())
@@ -47,18 +51,18 @@ export class EventBookingFormContainer extends React.Component<EventBookingFormC
         return <EventBookingForm event={this.state.event} onSubmit={amount => this.handleSubmit(amount)}/>
     }
 
-    private handleSubmit(seats: number) {
-        const url = this.props.bookingServiceURL + "/events/" + this.props.eventID + "/bookings";
-        const payload = {seats: seats};
+    handleSubmit(seats: number) {
+        const url = this.props.bookingServiceURL + "/events/" + this.props.eventID + "/" + this.props.userID +  "/bookings";
+        const payload = {Seats: seats};
 
         this.setState({
             event: this.state.event,
             state: "saving"
         });
-
+        console.log('EventBookingFormContainer url=', url);
+        console.log('payload=',JSON.stringify(payload));
         fetch(url, {method: "POST", body: JSON.stringify(payload)})
             .then(response => {
-                console.log("foo")
                 this.setState({
                     event: this.state.event,
                     state: response.ok ? "done" : "error"

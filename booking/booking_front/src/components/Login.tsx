@@ -7,8 +7,8 @@ export interface LoginState {
 	email: string;
 	password: string;
 	msg: string;
-	verified:boolean;
-	
+	verified: boolean;
+
 }
 export interface LoginProps {
 	history: any;
@@ -24,7 +24,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
 			email: "",
 			password: "",
 			verified: false,
-			msg:""
+			msg: ""
 		};
 	}
 
@@ -39,30 +39,47 @@ export class Login extends React.Component<LoginProps, LoginState> {
 	handleChange(e: React.FormEvent<FormControlProps>) {
 		let name = e.currentTarget.name;
 		let val = e.currentTarget.value;
-		this.setState({...this.state,[name]:val})
+		this.setState({ ...this.state, [name]: val })
 	}
 
 	handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
-		console.log(this.state.email);
-		console.log(this.state.password);
+//		console.log(this.state.email);
+		//console.log(this.state.password);
 
-        fetch("http://localhost:8181" + "/users/findUserEmailPass/" + this.state.email + "/" + this.state.password, {method: "GET"})
-			.then(response => {
-				if (response.ok) {
-					this.props.history.push('/list');
-				//	this.setState({...this.state,verified:true,msg:""})
+		fetch("http://localhost:8181" + "/users/findUserEmailPass/" + this.state.email + "/" + this.state.password, { method: "GET" })
+			.then(r => r.json()
+			.then(data => ({status:r.status,body:data})))
+			.then(obj => {
+				//console.log(obj);
+				console.log(obj.status);
+				console.log(obj.body.ID)
+				const loc1 = {
+					pathname:'/list',
+					state:{USERID:obj.body.ID}
+				}
+				if(obj.status === 200) {
+					this.props.history.push(loc1);
 				}
 				else{
-					this.props.history.push('/error');
+					this.props.history.push('/error');					
 				}
+				
+			})
+				//console.log('status ',status);
+
+				//console.log(body);
 				/*
+				if (response.ok) {
+					this.props.history.push(	'/list');
+					//	this.setState({...this.state,verified:true,msg:""})
+				}
 				else {
-					this.setState({...this.state,verified:false,msg:"not verified"})
+					this.props.history.push('/error');
 				}*/
-			}
-			)
-			
+		//	}
+			//)
+
 
 	}
 
@@ -124,9 +141,9 @@ export class Login extends React.Component<LoginProps, LoginState> {
 							Login
 						</Button>
 					</form>
-					
+
 					<div>
-						{this.state.msg}	
+						{this.state.msg}
 					</div>
 				</div>
 			</div>
