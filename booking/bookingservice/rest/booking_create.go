@@ -34,7 +34,15 @@ type CreateBookingHandler struct {
 	database     persistence.DatabaseHandler
 }
 
-func (h *CreateBookingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func newBookingHandler(databaseHandler persistence.DatabaseHandler, eventEmitter msgqueue.EventEmitter) *CreateBookingHandler {
+	return &CreateBookingHandler{
+		eventEmitter: eventEmitter,
+		database:     databaseHandler,
+	}
+}
+
+func (h *CreateBookingHandler) bookingHandler(w http.ResponseWriter, r *http.Request) {
+	//func (h *CreateBookingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	routeVars := mux.Vars(r)
 	eventID, ok := routeVars["eventID"]
 	if !ok {
