@@ -3,6 +3,7 @@ package mongolayer
 import (
 	"andy/booking/lib/persistence"
 	"log"
+	"reflect"
 
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -70,7 +71,9 @@ func (mgoLayer *MongoDBLayer) AddBookingForUser(id []byte, bk persistence.Bookin
 	log.Println("mgoLayer.AddBookingForUser")
 	s := mgoLayer.getFreshSession()
 	defer s.Close()
-	return s.DB(DB).C(USERS).UpdateId(bson.ObjectId(id), bson.M{"$addToSet": bson.M{"bookings": []persistence.Booking{bk}}})
+	//not this push and array so we had array of arrays of structs, instead of array of structs (i.e array of bookings)
+	//return s.DB(DB).C(USERS).UpdateId(bson.ObjectId(id), bson.M{"$addToSet": bson.M{"bookings": []persistence.Booking{bk}}})
+	return s.DB(DB).C(USERS).UpdateId(bson.ObjectId(id), bson.M{"$push": bson.M{"bookings": bson.M{"date": bk.Date, "eventid": bk.EventID, "seats": bk.Seats}}})
 }
 
 func (mgoLayer *MongoDBLayer) FindUser(f string, l string) (persistence.User, error) {
@@ -98,6 +101,12 @@ func (mgoLayer *MongoDBLayer) FindBookingsForUser(id []byte) ([]persistence.Book
 	defer s.Close()
 	u := persistence.User{}
 	err := s.DB(DB).C(USERS).FindId(bson.ObjectId(id)).One(&u)
+	log.Println("email:", u.Email)
+	log.Println("bookings ")
+	log.Println("bookins type=", reflect.TypeOf(u.Bookings))
+	for _, b := range u.Bookings {
+		log.Println("booking:", b.Date)
+	}
 	return u.Bookings, err
 }
 
