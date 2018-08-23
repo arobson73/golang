@@ -1,0 +1,8 @@
+#!/bin/bash
+#$1 is the json file which says how many seats are required
+#$2 is the eventID
+#$3 is the userID
+#test eventID=5b62b1cbad75455d4a4d9bc6, userID=5b62b1cbad75455d4a4d9bcc
+
+curl -d "@$1" -X POST http://localhost:8182/bookings/$2/$3
+#curl -d "@seats.json" -X POST http://localhost:8182/events/5b62b1cbad75455d4a4d9bc6/5b62b1cbad75455d4a4d9bcc/bookings

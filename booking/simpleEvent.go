@@ -45,6 +45,8 @@ type User struct {
 	ID       bson.ObjectId `bson:"_id"`
 	First    string
 	Last     string
+	Email    string
+	Password string
 	Age      int
 	Bookings []Booking
 }
@@ -64,7 +66,7 @@ func main() {
 		e1, _ := eventIDs[1].MarshalText()
 		e2, _ := eventIDs[2].MarshalText()
 		e3, _ := eventIDs[3].MarshalText()
-			eventIDsBytes := [][]byte{e0, e1, e2, e3}
+		eventIDsBytes := [][]byte{e0, e1, e2, e3}
 	*/
 	//	b2, _ := b1.MarshalText()
 	//eventIDSAsBytes := [][]bytes{eventIDs[0].MarshalText(), eventIDs[1].MarshalText(), eventIDs[2].MarshalText(), eventIDs[3].MarshalText()}
@@ -84,18 +86,18 @@ func main() {
 	locs := []Location{}
 	//users with no bookings, can add booking via rest instead
 	users := []User{
-		{bson.NewObjectId(), "Jim", "Smith", 22, []Booking{
+		{bson.NewObjectId(), "Jim", "Smith", "jimsmith@yahoo.co.uk", "fer6et", 22, []Booking{
 			/*
 				{eventStartDates[0], eventIDsBytes[0], 2},
 				{eventStartDates[1], eventIDsBytes[1], 3}*/},
 		},
-		{bson.NewObjectId(), "Paul", "Jones", 44, []Booking{ /*
+		{bson.NewObjectId(), "Paul", "Jones", "pauljones44@hotmail.com", "jonesy123", 44, []Booking{ /*
 				{eventStartDates[2], eventIDsBytes[2], 2}*/},
 		},
-		{bson.NewObjectId(), "Frank", "Roberts", 31, []Booking{ /*
+		{bson.NewObjectId(), "Frank", "Roberts", "froberts@google.co.uk", "freddie99", 31, []Booking{ /*
 				{eventStartDates[3], eventIDsBytes[3], 1}*/},
 		},
-		{bson.NewObjectId(), "Gale", "Moor", 28, []Booking{ /*
+		{bson.NewObjectId(), "Gale", "Moor", "galeM43@google.com", "gmrr889", 28, []Booking{ /*
 				{eventStartDates[1], eventIDsBytes[1], 4},
 				{eventStartDates[2], eventIDsBytes[2], 2},
 				{eventStartDates[3], eventIDsBytes[3], 3}*/},

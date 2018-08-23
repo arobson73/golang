@@ -1,0 +1,7 @@
+#!/bin/bash
+#$1 is firstname
+#$2 is secondname
+#note no code handles case so is case sensitive
+#./findUserEmailPass Email Pass
+
+curl -i http://localhost:8181/users/findUserEmailPass/$1/$2
