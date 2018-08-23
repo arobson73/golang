@@ -5,14 +5,15 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Shopify/sarama"
-
+	"andy/booking/eventService/listner"
 	"andy/booking/eventService/rest"
 	"andy/booking/lib/configuration"
 	"andy/booking/lib/msgqueue"
 	msgqueue_amqp "andy/booking/lib/msgqueue/amqp"
 	"andy/booking/lib/msgqueue/kafka"
 	"andy/booking/lib/persistence/dblayer"
+
+	"github.com/Shopify/sarama"
 
 	"log"
 
@@ -27,6 +28,7 @@ func init() {
 
 func main() {
 	var eventEmitter msgqueue.EventEmitter
+	var eventListener msgqueue.EventListener
 
 	confPath := flag.String("conf", `.\configuration\config.json`, "flag to set the path to the configuration json file")
 	flag.Parse()
@@ -47,6 +49,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+		eventListener, err = msgqueue_amqp.NewAMQPEventListener(conn, "events", "user")
 
 		eventEmitter, err = msgqueue_amqp.NewAMQPEventEmitter(conn, "events")
 		if err != nil {
@@ -71,6 +74,9 @@ func main() {
 
 	fmt.Println("Connecting to database")
 	dbhandler, _ := dblayer.NewPersistenceLayer(config.Databasetype, config.DBConnection)
+
+	processor := listener.BookingProcessor{eventListener, dbhandler}
+	go processor.ProcessEvents()
 
 	fmt.Println("Serving API")
 	//RESTful API start
