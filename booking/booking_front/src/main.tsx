@@ -19,7 +19,7 @@ class App extends React.Component<{}, {}> {
         <Route path="/register" component={Register} />
         <Route path="/list" component={eventList} />
         <Route path="/error" component={ErrorLogin}/>
-        <Route path="/events/:id/:userid/bookings" component={eventBooking}/>
+        <Route path="/bookings/:id/:userid" component={eventBooking}/>
 
       </Switch>
     </BrowserRouter>
