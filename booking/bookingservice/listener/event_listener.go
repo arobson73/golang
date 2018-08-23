@@ -54,7 +54,7 @@ func (p *EventProcessor) handleEvent(event msgqueue.Event) {
 			return
 		}
 
-		p.Database.AddUser(persistence.User{ID: bson.ObjectIdHex(e.ID), First: e.First, Last: e.Last, Age: e.Age, Bookings: e.Bookings})
+		p.Database.AddUser(persistence.User{ID: bson.ObjectIdHex(e.ID), First: e.First, Last: e.Last, Email: e.Email, Password: e.Password, Age: e.Age, Bookings: e.Bookings})
 
 	case *contracts.LocationCreatedEvent:
 		log.Printf("location %s created: %v", e.ID, e)
