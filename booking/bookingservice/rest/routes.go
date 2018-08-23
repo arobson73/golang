@@ -13,8 +13,10 @@ import (
 func ServeAPI(listenAddr string, database persistence.DatabaseHandler, eventEmitter msgqueue.EventEmitter) error {
 	handler := newBookingHandler(database, eventEmitter)
 	r := mux.NewRouter()
-	bookingrouter := r.PathPrefix("/events").Subrouter()
-	bookingrouter.Methods("POST").Path("/{eventID}/{userID}/bookings").HandlerFunc(handler.bookingHandler)
+	bookingrouter := r.PathPrefix("/bookings").Subrouter()
+	bookingrouter.Methods("POST").Path("/{eventID}/{userID}").HandlerFunc(handler.bookingHandler)
+
+	bookingrouter.Methods("GET").Path("/{userID}").HandlerFunc(handler.bookingsForUserHandler)
 	//	r.Methods("post").Path("/events/{eventID}/{userID}/bookings").Handler(&CreateBookingHandler{eventEmitter, database})
 	rc := handlers.CORS()(r)
 	return http.ListenAndServe(listenAddr, rc)

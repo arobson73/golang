@@ -41,6 +41,38 @@ func newBookingHandler(databaseHandler persistence.DatabaseHandler, eventEmitter
 	}
 }
 
+func (h *CreateBookingHandler) bookingsForUserHandler(w http.ResponseWriter, r *http.Request) {
+	routeVars := mux.Vars(r)
+	userID, ok := routeVars["userID"]
+	log.Printf("userID=%s\n", userID)
+	if !ok {
+		w.WriteHeader(400)
+		fmt.Fprint(w, "missing route parameter 'userID")
+		return
+	}
+	userIDMongo, _ := hex.DecodeString(userID)
+	bookings, err := h.database.FindBookingsForUser(userIDMongo)
+	if err != nil {
+		w.WriteHeader(404)
+		fmt.Fprintf(w, "bookings for %s could not be loaded: %s", userIDMongo, err)
+		return
+	}
+	//	log.Printf("\nbookings are:\n")
+	//log.Printf("len bookings =%d", len(bookings))
+	for _, b := range bookings {
+		log.Printf("%d \n", b.Date)
+
+	}
+	//	log.Printf("\ndone")
+	w.Header().Set("Content-Type", "application/json;charset=utf8")
+	err = json.NewEncoder(w).Encode(bookings)
+	if err != nil {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, "Error occured while trying to encode bookings to JSON %s", err)
+	}
+
+}
+
 func (h *CreateBookingHandler) bookingHandler(w http.ResponseWriter, r *http.Request) {
 	//func (h *CreateBookingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	routeVars := mux.Vars(r)
@@ -59,6 +91,10 @@ func (h *CreateBookingHandler) bookingHandler(w http.ResponseWriter, r *http.Req
 	//	fmt.Fprintf(w, "%s %s", eventID, userID)
 
 	eventIDMongo, _ := hex.DecodeString(eventID)
+	//log.Println("eventIDMongo=", string(eventIDMongo[:]))
+	//	log.Println("eventIDMongoS=", eventID)
+	//log.Println("eventIDMongoSS=", hex.EncodeToString(eventIDMongo))
+
 	event, err := h.database.FindEvent(eventIDMongo)
 	if err != nil {
 		w.WriteHeader(404)
@@ -83,8 +119,14 @@ func (h *CreateBookingHandler) bookingHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	eventIDAsBytes, _ := event.ID.MarshalText()
+	//	log.Println("eventIDAsBytes=", string(eventIDAsBytes[:]))
+	//log.Println("eventIDAsBytesS=", event.ID)
+	//log.Println("eventIDAsBytesSS=", event.ID.String())
+	//log.Println("eventIDAsBytesSSS=", event.ID.Hex())
+
+	tn := time.Now()
 	booking := persistence.Booking{
-		Date:    time.Now().Unix(),
+		Date:    tn.Unix(),
 		EventID: eventIDAsBytes,
 		Seats:   bookingRequest.Seats,
 	}
@@ -95,7 +137,10 @@ func (h *CreateBookingHandler) bookingHandler(w http.ResponseWriter, r *http.Req
 	msg := contracts.EventBookedEvent{
 		EventID: event.ID.Hex(),
 		//UserID:  "someUserID",
+
 		UserID: userID,
+		Seats:  booking.Seats,
+		Date:   tn,
 	}
 	h.eventEmitter.Emit(&msg)
 
