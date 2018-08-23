@@ -29,6 +29,7 @@ func main() {
 		"cd /home/febe/go/src/andy/booking/bookingservice/rest && go install",
 		"cd /home/febe/go/src/andy/booking/contracts && go install",
 		"cd /home/febe/go/src/andy/booking/eventService/rest && go install",
+		"cd /home/febe/go/src/andy/booking/eventService/listner && go install",
 	}
 
 	buildPaths := []string{
