@@ -21,7 +21,8 @@ type eventRef struct {
 }
 
 type createBookingRequest struct {
-	Seats int `json:"seats"`
+	Seats int    `json:"seats"`
+	Name  string `json:"name"`
 }
 
 type createBookingResponse struct {
@@ -129,6 +130,7 @@ func (h *CreateBookingHandler) bookingHandler(w http.ResponseWriter, r *http.Req
 		Date:    tn.Unix(),
 		EventID: eventIDAsBytes,
 		Seats:   bookingRequest.Seats,
+		Name:    bookingRequest.Name,
 	}
 
 	//need to get userid. in real use case user would be logged in,
@@ -141,6 +143,7 @@ func (h *CreateBookingHandler) bookingHandler(w http.ResponseWriter, r *http.Req
 		UserID: userID,
 		Seats:  booking.Seats,
 		Date:   tn,
+		Name:   booking.Name,
 	}
 	h.eventEmitter.Emit(&msg)
 
