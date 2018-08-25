@@ -53,7 +53,8 @@ export class EventBookingFormContainer extends React.Component<EventBookingFormC
 
     handleSubmit(seats: number) {
         const url = this.props.bookingServiceURL + "/bookings/" + this.props.eventID + "/" + this.props.userID ;
-        const payload = {Seats: seats};
+       // const url = this.props.bookingServiceURL + "/" + this.props.eventID + "/" + this.props.userID ;
+        const payload = {Seats: seats,Name:this.state.event.Name};
 
         this.setState({
             event: this.state.event,

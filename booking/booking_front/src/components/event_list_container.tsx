@@ -16,6 +16,13 @@ export interface EventListContainerState {
 export class EventListContainer extends React.Component<EventListContainerProps, EventListContainerState> {
     constructor(p: EventListContainerProps) {
         super(p);
+         if (typeof p.location.state != 'undefined'){
+             localStorage.setItem('userid',p.location.state.USERID); //use this for refresh case
+             localStorage.setItem('username',p.location.state.first);
+             console.log('setting:', p.location.state.USERID )
+
+         }
+        // console.log('name=',p.location.state.first);
 
         this.state = {
             loading: true,
@@ -38,11 +45,9 @@ export class EventListContainer extends React.Component<EventListContainerProps,
     }
 
     render() {
-        console.log('EvenListContainer userid=',this.props.location.state.USERID)
         
-        //console.log(this.props.location);
         return <Loader loading={this.state.loading} message="Loading events...">
-            <EventList userID= {this.props.location.state.USERID} events={this.state.events} onEventBooked={e => this.handleEventBooked(e)}/>
+            <EventList userID= {localStorage.getItem('userid')} name={localStorage.getItem('username')} events={this.state.events} onEventBooked={e => this.handleEventBooked(e)}/>
         </Loader>
     }
 }

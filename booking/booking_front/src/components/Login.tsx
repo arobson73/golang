@@ -48,7 +48,26 @@ export class Login extends React.Component<LoginProps, LoginState> {
 		//console.log(this.state.password);
 
 		fetch("http://localhost:8181" + "/users/findUserEmailPass/" + this.state.email + "/" + this.state.password, { method: "GET" })
-			.then(r => r.json()
+			.then(r =>  {
+				if (!r.ok)
+				{
+					this.props.history.push('/error')
+				}
+				else {
+					r.json()
+					.then(data => ({status:r.status,body:data}))
+					.then(obj => {
+						const loc1 = {
+							pathname:'/list',
+							state:{USERID:obj.body.ID,first:obj.body.First}
+						}
+						if(obj.status === 200) {
+							this.props.history.push(loc1);
+						}		
+						})
+					}
+			})/*
+			.catch(e => console.log(e))
 			.then(data => ({status:r.status,body:data})))
 			.then(obj => {
 				//console.log(obj);
@@ -65,7 +84,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
 					this.props.history.push('/error');					
 				}
 				
-			})
+			})*/
 				//console.log('status ',status);
 
 				//console.log(body);
@@ -80,7 +99,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
 		//	}
 			//)
 
-
+			
 	}
 
 	render() {
@@ -103,7 +122,6 @@ export class Login extends React.Component<LoginProps, LoginState> {
 							left:80%;
 						}
     				`}</style>
-
 				<div>
 					<Link className="customLink" to="/register">
 						Register

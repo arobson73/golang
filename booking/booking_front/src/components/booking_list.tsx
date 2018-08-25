@@ -1,36 +1,36 @@
 import * as React from "react";
 import { EventListItem } from "./event_list_item";
+import { BookingListItem } from "./booking_list_item";
 import { Event } from "../model/event";
 import { Link } from 'react-router-dom';
-export interface EventListProps {
+import {Booking} from "../model/event";
+export interface BookingListProps {
     userID: string;
-    name:string;
-    events: Event[];
-    onEventBooked: (e: Event) => any;
+    bookings: Booking[];
 }
 
 //<td><Link to={`/bookings/${this.props.event.ID}/${this.props.userID}/bookings`}
-export class EventList extends React.Component<EventListProps, {}> {
+export class BookingList extends React.Component<BookingListProps, {}> {
     public render() {
        // console.log('EventList userid=', this.props.userID)
-        const items = this.props.events.map(event =>
-            <EventListItem key={event.ID} userID={this.props.userID} event={event} onBooked={() => this.props.onEventBooked(event)} />
+        let i = 0;
+        const items = this.props.bookings.map(booking =>
+            <BookingListItem key={i++} booking={booking} />
         );
 
         return <div>
             <nav className="navbar navbar-expand-md navbar-dark bg-dark">
-                <div className="navbar-text"> <strong>Available Events</strong></div>
+                <div className="navbar-text"> <strong>Your Bookings</strong></div>
                 <div className="nav navbar-nav ml-auto">
-                    <Link to={`/userbookings/${this.props.userID}`}>See bookings for {this.props.name} </Link>
-                </div>
+                    <Link to="/list">Back To Events</Link>
+                 </div>
             </nav>
             <table className="table">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Where</th>
-                        <th colSpan={2}>When (start/end)</th>
-                        <th>Actions</th>
+                        <th>Date</th>
+                        <th>Event</th>
+                        <th>Seats</th>
                     </tr>
                 </thead>
                 <tbody>
