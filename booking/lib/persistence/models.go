@@ -25,6 +25,7 @@ type Booking struct {
 	EventID []byte
 	//EventID bson.ObjectId `bson:"_id"`
 	Seats int
+	Name  string
 }
 
 type UserFind struct {
