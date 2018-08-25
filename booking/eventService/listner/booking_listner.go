@@ -51,6 +51,7 @@ func (p *BookingProcessor) handleEvent(event msgqueue.Event) {
 			Date:    e.Date.Unix(),
 			EventID: eventbytes,
 			Seats:   e.Seats,
+			Name:    e.Name,
 		}
 		userIDBytes, _ := hex.DecodeString(e.UserID)
 		err := p.Database.AddBookingForUser(userIDBytes, booking)
