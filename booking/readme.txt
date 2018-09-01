@@ -14,7 +14,7 @@ make sure mongo is setup/installed.
 in the /eventService folder run the main in a terminal . this will use rest at localhost:8181 mongo at port default(27017).
 For this i started mongo prior to running this main via sudo service mongod start (this uses 27017) and gets its config from /etc/mongo.conf
 
-in another terminal do mongod --dbpath ~/go/src/andy/booking/bookingservice/ --port 27018
+in another terminal do mongod --dbpath ~/go/src/andy/booking/bookingservice/db --port 27018
 you now have 2 instances of mongo running
 
 in another terminal run the /bookingservice main (./main -conf=config.json) .Check this config it sets up mongo to use port 27018
