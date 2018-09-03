@@ -9,10 +9,11 @@ import (
 )
 
 const (
-	DB        = "myevents"
-	USERS     = "users"
-	EVENTS    = "events"
-	LOCATIONS = "locations"
+	DB         = "myevents"
+	USERS      = "users"
+	ADMINUSERS = "adminuser"
+	EVENTS     = "events"
+	LOCATIONS  = "locations"
 )
 
 type MongoDBLayer struct {
@@ -37,6 +38,17 @@ func (mgoLayer *MongoDBLayer) AddUser(u persistence.User) ([]byte, error) {
 
 	//u.ID = bson.NewObjectId()
 	return []byte(u.ID), s.DB(DB).C(USERS).Insert(u)
+}
+func (mgoLayer *MongoDBLayer) AddAdminUser(u persistence.AdminUser) ([]byte, error) {
+	log.Println("mgoLayer.AddAdminUser")
+	s := mgoLayer.getFreshSession()
+	defer s.Close()
+	if !u.ID.Valid() {
+		u.ID = bson.NewObjectId()
+	}
+
+	//u.ID = bson.NewObjectId()
+	return []byte(u.ID), s.DB(DB).C(ADMINUSERS).Insert(u)
 }
 
 func (mgoLayer *MongoDBLayer) AddEvent(e persistence.Event) ([]byte, error) {
@@ -66,6 +78,27 @@ func (mgoLayer *MongoDBLayer) AddLocation(l persistence.Location) (persistence.L
 	return l, err
 }
 
+func (mgoLayer *MongoDBLayer) AddEventForAdminUser(id []byte, e persistence.Event) error {
+	log.Println("mgoLayer.AddEventForAdminUser")
+	s := mgoLayer.getFreshSession()
+	defer s.Close()
+	if !e.ID.Valid() {
+		e.ID = bson.NewObjectId()
+	}
+
+	if e.Location.ID == "" {
+		e.Location.ID = bson.NewObjectId()
+	}
+
+	//not this push and array so we had array of arrays of structs, instead of array of structs (i.e array of bookings)
+	//return s.DB(DB).C(USERS).UpdateId(bson.ObjectId(id), bson.M{"$addToSet": bson.M{"bookings": []persistence.Booking{bk}}})
+	//return s.DB(DB).C(ADMINUSERS).UpdateId(bson.ObjectId(id), bson.M{"$push": bson.M{"bookings": bson.M{"date": bk.Date, "eventid": bk.EventID, "seats": bk.Seats, "name": bk.Name}}})
+	//	return s.DB(DB).C(ADMINUSERS).UpdateId(bson.ObjectId(id), bson.M{"$push": bson.M{"events": bson.M{"id": e.ID, "name": e.Name, "duration": e.Duration, "startdate": e.StartDate, "enddate": e.EndDate, bson.M{"location": bson.M{"id": e.Location.ID, "name": e.Location.Name,
+	//"address": e.Location.Address, "country": e.Location.Country, "opentime": e.Location.OpenTime, "closetime": e.Location.CloseTime, bson.M{"halls": e.Location.Halls}}}}}})
+	return s.DB(DB).C(ADMINUSERS).UpdateId(bson.ObjectId(id), bson.M{"$push": bson.M{"events": bson.M{"id": e.ID, "name": e.Name, "duration": e.Duration, "startdate": e.StartDate, "enddate": e.EndDate, "location": e.Location}}})
+
+}
+
 func (mgoLayer *MongoDBLayer) AddBookingForUser(id []byte, bk persistence.Booking) error {
 	log.Println("mgoLayer.AddBookingForUser")
 	s := mgoLayer.getFreshSession()
@@ -93,6 +126,15 @@ func (mgoLayer *MongoDBLayer) FindUserEmailPass(e string, p string) (persistence
 	//fmt.Printf("Found %v \n", u.String())
 	return u, err
 }
+func (mgoLayer *MongoDBLayer) FindAdminUserEmailPass(e string, p string) (persistence.AdminUser, error) {
+	log.Println("mgoLayer.FindAdminUserEmail")
+	s := mgoLayer.getFreshSession()
+	defer s.Close()
+	u := persistence.AdminUser{}
+	err := s.DB(DB).C(ADMINUSERS).Find(bson.M{"email": e, "password": p}).One(&u)
+	//fmt.Printf("Found %v \n", u.String())
+	return u, err
+}
 
 func (mgoLayer *MongoDBLayer) FindBookingsForUser(id []byte) ([]persistence.Booking, error) {
 	log.Println("mgoLayer.FindBookingsForUser")
@@ -117,6 +159,16 @@ func (mgoLayer *MongoDBLayer) FindEvent(id []byte) (persistence.Event, error) {
 
 	err := s.DB(DB).C(EVENTS).FindId(bson.ObjectId(id)).One(&e)
 	return e, err
+}
+
+func (mgoLayer *MongoDBLayer) FindAdminUser(id []byte) (persistence.AdminUser, error) {
+	log.Println("mgoLayer.FindAdminUser")
+	s := mgoLayer.getFreshSession()
+	defer s.Close()
+	u := persistence.AdminUser{}
+
+	err := s.DB(DB).C(ADMINUSERS).FindId(bson.ObjectId(id)).One(&u)
+	return u, err
 }
 
 //not sure we need this.
