@@ -1,14 +1,3 @@
-//const React = require('react')
-//import * as ReactDOM from 'react-dom';
-/*
-import * as React from "react";
-
-export class Register extends React.Component<{},{}> {
-	render() {
-		return <div><h1> Register </h1></div>
-	}
-}
-*/
 import * as React from "react";
 import { Link } from 'react-router-dom';
 import {ObjectID} from 'bson';
@@ -61,25 +50,12 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
 		let val = e.currentTarget.value;
 
 			this.setState({...this.state,[name]:val})
-/*
-		if (name === "firstname" || name === "secondname")
-		{
-			let val = e.currentTarget.value.toString().toLowerCase();	
-			this.setState({...this.state,[name]:val})
-		}
-		else if(name === "age") {
-			this.setState({...this.state,[name]:parseInt(e.currentTarget.value)})
-		}
-		else{
 
-			this.setState({...this.state,[name]:e.currentTarget.value})
-		}*/
 	}
 
 	handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
-//		console.log(this.state.email);
-		//console.log(this.state.password);
+
 		const payload = JSON.stringify({
 			ID:this.state.id.toString(),
 			First:this.state.firstname,
@@ -90,16 +66,7 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
 			Bookings:[]
 
 		});
-		//console.log(payload.ID);
-	//	console.log(payload.First);
-		//console.log(payload.Last);
-		//console.log(payload.Email);
-		//console.log(payload.Password);
-		//console.log(payload.Age);
-		//console.log(payload.Bookings);
-		//console.log(payload);	
-	
-	
+
 
 		console.log(payload);
 		
@@ -109,7 +76,6 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
 				console.log(response.json)
 				if (response.ok) {
 					this.props.history.push('/list');
-					//	this.setState({...this.state,verified:true,msg:""})
 				}
 				else {
 					this.props.history.push('/error');
@@ -118,21 +84,7 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
 			).catch(e => console.log('Error',e))
 
 
-           
-		/*
-
-        fetch("http://localhost:8181" + "/users/findUserEmailPass/" + this.state.email + "/" + this.state.password, {method: "GET"})
-			.then(response => {
-				if (response.ok) {
-					this.props.history.push('/list');
-				//	this.setState({...this.state,verified:true,msg:""})
-				}
-				else{
-					this.props.history.push('/error');
-				}
-			}
-			)
-	*/			
+		
 
 	}
 

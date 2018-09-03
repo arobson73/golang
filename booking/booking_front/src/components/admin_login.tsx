@@ -3,19 +3,17 @@ import { Link } from 'react-router-dom';
 
 import { Button, FormGroup, FormControl, ControlLabel, FormControlProps } from "react-bootstrap";
 
-export interface LoginState {
+export interface AdminLoginState {
 	email: string;
 	password: string;
-	msg: string;
-	verified: boolean;
 
 }
-export interface LoginProps {
+export interface AdminLoginProps {
 	history: any;
 }
 
-export class Login extends React.Component<LoginProps, LoginState> {
-	constructor(props: LoginProps) {
+export class AdminLogin extends React.Component<AdminLoginProps, AdminLoginState> {
+	constructor(props: AdminLoginProps) {
 		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
@@ -23,8 +21,6 @@ export class Login extends React.Component<LoginProps, LoginState> {
 		this.state = {
 			email: "",
 			password: "",
-			verified: false,
-			msg: ""
 		};
 	}
 
@@ -45,21 +41,24 @@ export class Login extends React.Component<LoginProps, LoginState> {
 	handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
-		fetch("http://localhost:8181" + "/users/findUserEmailPass/" + this.state.email + "/" + this.state.password, { method: "GET" })
+		fetch("http://localhost:8181" + "/admin/verifyAdminUser/" + this.state.email + "/" + this.state.password, { method: "GET" })
 			.then(r =>  {
 				if (!r.ok)
 				{
-					this.props.history.push('/error')
+					this.props.history.push('/adminError')
 				}
 				else {
+					console.log('ok from server');
 					r.json()
 					.then(data => ({status:r.status,body:data}))
 					.then(obj => {
 						const loc1 = {
-							pathname:'/list',
+							pathname:'/admin/event',
 							state:{USERID:obj.body.ID,first:obj.body.First}
 						}
 						if(obj.status === 200) {
+							//console.log('pushing to event')
+							console.log('admin log userid=',loc1.state.USERID)
 							this.props.history.push(loc1);
 						}		
 						})
@@ -89,19 +88,13 @@ export class Login extends React.Component<LoginProps, LoginState> {
 						}
     				`}</style>
 				<div>
-					<Link className="customLink" to="/register">
-						Register
-					</Link>
-
-				</div>
-				<div>
 					<form className="formCustom" onSubmit={e => this.handleSubmit(e)}>
-						<h3> Events Board</h3>
+						<h3> Admin Events Board</h3>
 						<FormGroup controlId="email" bsSize="small">
 							<ControlLabel>Email</ControlLabel>
 							<FormControl
 								autoFocus
-								type="email"
+								type="string"
 								value={this.state.email}
 								onChange={e => this.handleChange(e)}
 								name="email"
@@ -112,7 +105,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
 							<FormControl
 								value={this.state.password}
 								onChange={e => this.handleChange(e)}
-								type="password"
+								type="string"
 								name="password"
 							/>
 						</FormGroup>
@@ -126,9 +119,6 @@ export class Login extends React.Component<LoginProps, LoginState> {
 						</Button>
 					</form>
 
-					<div>
-						{this.state.msg}
-					</div>
 				</div>
 			</div>
 		);

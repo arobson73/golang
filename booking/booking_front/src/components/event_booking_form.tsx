@@ -2,6 +2,7 @@ import * as React from "react";
 import {ChangeEvent} from "react";
 import {Event} from "../model/event";
 import {FormRow} from "./form_row";
+import {Link} from "react-router-dom"
 
 export interface EventBookingFormProps {
     event: Event;
@@ -31,11 +32,18 @@ export class EventBookingForm extends React.Component<EventBookingFormProps, Eve
 
     render() {
         return <div>
-            <h2>Book tickets for {this.props.event.Name}!</h2>
+            <nav className="navbar navbar-expand-md navbar-dark bg-dark">
+                <div className="navbar-text"> <strong>{this.props.event.Name} Booking </strong></div>
+                <div className="nav navbar-nav ml-auto">
+                    <Link to="/list">Back To Events</Link>
+                 </div>
+            </nav>
+
             <form className="form-horizontal">
+    {/*}
                 <FormRow label="Event">
                     <p className="form-control-static">{this.props.event.Name}</p>
-                </FormRow>
+    </FormRow> */}
                 <FormRow label="Number of tickets">
                     <select className="form-control" value={this.state.selectedAmount} onChange={e => this.handleNewAmount(e)}>
                         <option value="1">1</option>

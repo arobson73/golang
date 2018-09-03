@@ -12,7 +12,7 @@ export class BookingListItem extends React.Component<BookingListItemProps, {}> {
 
         return <tr>
             <td>{this.props.booking.Date.toString()}</td>
-            <td>{this.props.booking.EventID}</td>
+            <td>{this.props.booking.Name}</td>
             <td>{this.props.booking.Seats}</td>
 
         </tr>
