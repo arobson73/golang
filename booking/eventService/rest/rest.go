@@ -30,6 +30,12 @@ func ServeAPI(endpoint string, dbHandler persistence.DatabaseHandler, eventEmitt
 	userRouter.Methods("POST").Path("").HandlerFunc(handler.newUserHandler)
 	userRouter.Methods("GET").Path("/findUser/{firstname}/{secondname}").HandlerFunc(handler.findUserHandler)
 	userRouter.Methods("GET").Path("/findUserEmailPass/{email}/{password}").HandlerFunc(handler.findUserEmailPassHandler)
+
+	adminRouter := r.PathPrefix("/admin").Subrouter()
+	adminRouter.Methods("POST").Path("").HandlerFunc(handler.newAdminUserHandler)
+	adminRouter.Methods("GET").Path("/verifyAdminUser/{email}/{password}").HandlerFunc(handler.verifyAdminUserHandler)
+	adminRouter.Methods("POST").Path("/addEventForUser/{userID}").HandlerFunc(handler.addEventForAdminUser)
+	//userRouter.Methods("GET").Path("/{password}").HandlerFunc(handler.checkAdminUser)
 	rc := handlers.CORS()(r)
 
 	return http.ListenAndServe(endpoint, rc)

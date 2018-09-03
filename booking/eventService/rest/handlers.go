@@ -28,6 +28,19 @@ func newEventHandler(databasehandler persistence.DatabaseHandler, eventEmitter m
 	}
 }
 
+/*
+func (eh *eventServiceHandler) checkAdminUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	pass, ok := vars["password"] //TODO should be encrypting passwords!
+	if !ok {
+		w.WriteHeader(404)
+		fmt.Fprintf(w, "No password found")
+		return
+	}
+	//just use the server to read a file for now. //TODO make more secure
+
+}*/
+
 //note in practive the password would be encrypted on client side, then decrypted here and send to db
 func (eh *eventServiceHandler) findUserEmailPassHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -45,6 +58,32 @@ func (eh *eventServiceHandler) findUserEmailPassHandler(w http.ResponseWriter, r
 
 	u := persistence.User{}
 	u, err := eh.dbhandler.FindUserEmailPass(email, pass)
+	if err != nil {
+		w.WriteHeader(404)
+		fmt.Fprintf(w, "Error occured %s", err)
+	}
+	w.Header().Set("Content-Type", "application/json;charset=utf8")
+	json.NewEncoder(w).Encode(&u)
+
+}
+
+//ditto as above with regsrds to security
+func (eh *eventServiceHandler) verifyAdminUserHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	email, ok := vars["email"]
+	if !ok {
+		fmt.Fprint(w, `No firstname found`)
+		return
+	}
+	pass, ok1 := vars["password"]
+	if !ok1 {
+		fmt.Fprint(w, `No secondname found`)
+		return
+
+	}
+
+	u := persistence.AdminUser{}
+	u, err := eh.dbhandler.FindAdminUserEmailPass(email, pass)
 	if err != nil {
 		w.WriteHeader(404)
 		fmt.Fprintf(w, "Error occured %s", err)
@@ -266,4 +305,80 @@ func (eh *eventServiceHandler) newUserHandler(w http.ResponseWriter, r *http.Req
 
 	w.WriteHeader(201)
 	json.NewEncoder(w).Encode(&persistedUser)
+}
+
+//add this not sure how it fits in yet
+func (eh *eventServiceHandler) newAdminUserHandler(w http.ResponseWriter, r *http.Request) {
+	//in post pass in id, first and last name,age and bookings
+
+	user := persistence.AdminUser{}
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		w.WriteHeader(400)
+		fmt.Fprintf(w, "request body could not be unserialized to admin user: %s", err)
+		return
+	}
+
+	persistedUser, err := eh.dbhandler.AddAdminUser(user)
+	if err != nil {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, "could not persist admin user: %s", err)
+	}
+
+	msg := contracts.AdminUserCreatedEvent{
+		ID: hex.EncodeToString(persistedUser),
+		//ID:       string(user.ID),
+		First:    user.First,
+		Last:     user.Last,
+		Email:    user.Email,
+		Password: user.Password, //clearly this is not something that is passed around and probably hashed
+		Company:  user.Company,
+		Events:   user.Events,
+	}
+	err = eh.eventEmitter.Emit(&msg)
+	if err != nil {
+		log.Printf("Issue Emitting +%v", err)
+	}
+
+	w.Header().Set("Content-Type", "application/json;charset=utf8")
+
+	w.WriteHeader(201)
+	json.NewEncoder(w).Encode(&persistedUser)
+}
+
+func (eh *eventServiceHandler) addEventForAdminUser(w http.ResponseWriter, r *http.Request) {
+	routeVars := mux.Vars(r)
+	userID, ok := routeVars["userID"]
+	if !ok {
+		w.WriteHeader(400)
+		fmt.Fprint(w, "missing route parameter 'userID")
+		return
+	}
+	fmt.Println(userID)
+	userIDMongo, _ := hex.DecodeString(userID)
+	/*
+		adminUser, err := eh.dbhandler.FindAdminUser(userIDMongo)
+		if err != nil {
+			w.WriteHeader(404)
+			fmt.Fprintf(w, "bo for %s could not be loaded: %s", userIDMongo, err)
+			return
+		}*/
+
+	event := persistence.Event{}
+	err := json.NewDecoder(r.Body).Decode(&event)
+	if nil != err {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, "error occured while decoding admin event data %s", err)
+		return
+	}
+	err = eh.dbhandler.AddEventForAdminUser(userIDMongo, event)
+	if err != nil {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, "error occured while persisting event %s", err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+
+	json.NewEncoder(w).Encode(&event)
 }
