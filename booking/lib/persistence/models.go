@@ -15,6 +15,15 @@ type User struct {
 	Age      int
 	Bookings []Booking
 }
+type AdminUser struct {
+	ID       bson.ObjectId `bson:"_id"`
+	First    string
+	Last     string
+	Email    string
+	Password string
+	Company  string
+	Events   []Event
+}
 
 func (u *User) String() string {
 	return fmt.Sprintf("id: %s, first_name: %s, last_name: %s, Age: %d, Bookings: %v", u.ID, u.First, u.Last, u.Email, u.Password, u.Age, u.Bookings)
@@ -47,8 +56,8 @@ type Location struct {
 	Name      string
 	Address   string
 	Country   string
-	OpenTime  int
-	CloseTime int
+	OpenTime  string
+	CloseTime string
 	Halls     []Hall
 }
 
