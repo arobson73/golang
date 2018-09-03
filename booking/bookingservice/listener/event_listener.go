@@ -19,7 +19,7 @@ type EventProcessor struct {
 func (p *EventProcessor) ProcessEvents() {
 	log.Println("listening or events")
 
-	received, errors, err := p.EventListener.Listen("eventCreated", "userCreated")
+	received, errors, err := p.EventListener.Listen("eventCreated", "userCreated", "adminUserCreated")
 
 	if err != nil {
 		panic(err)
@@ -46,7 +46,16 @@ func (p *EventProcessor) handleEvent(event msgqueue.Event) {
 			return
 		}
 
-		p.Database.AddEvent(persistence.Event{ID: bson.ObjectIdHex(e.ID), Name: e.Name})
+		p.Database.AddEvent(persistence.Event{ID: bson.ObjectIdHex(e.ID), Name: e.Name}) //note here we onlyreplication the id and name
+	case *contracts.AdminUserCreatedEvent:
+		log.Printf("event %s created: %s\n", e.ID, e.First)
+		if !bson.IsObjectIdHex(e.ID) {
+			log.Printf("event %v did not contain valid object ID", e)
+			return
+		}
+
+		p.Database.AddAdminUser(persistence.AdminUser{ID: bson.ObjectIdHex(e.ID), First: e.First, Last: e.Last, Email: e.Email, Password: e.Password, Company: e.Company, Events: e.Events})
+
 	case *contracts.UserCreatedEvent:
 		log.Printf("event %s created: %s\n", e.ID, e.First)
 		if !bson.IsObjectIdHex(e.ID) {
