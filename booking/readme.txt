@@ -1,3 +1,4 @@
+
 #use the simpleEvent.go to build some json input files. 
 #use the bash scripts to send GET/POST messages.
 #use the builder to build project go files (see other directory (simple builder)
@@ -109,5 +110,5 @@ makeBooking bash script.
 
 #you can view this by going to http://localhost
 
-#this is all skeleton code, front end needs login credentials to add new events / users. booking frontend buttton needs to use the user id to actually make a button which missing. TODO 
+#this is all skeleton code, front end needs login credentials to add new events / users. booking frontend buttton needs to use the user id to actually make a button which missing. TODO
 

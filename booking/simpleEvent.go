@@ -21,8 +21,8 @@ type Location struct {
 	Name      string
 	Address   string
 	Country   string
-	OpenTime  int
-	CloseTime int
+	OpenTime  string
+	CloseTime string
 	Halls     []Hall
 }
 
@@ -51,6 +51,16 @@ type User struct {
 	Bookings []Booking
 }
 
+type AdminUser struct {
+	ID       bson.ObjectId `bson:"_id"`
+	First    string
+	Last     string
+	Email    string
+	Password string
+	Company  string
+	Events   []Event
+}
+
 func main() {
 	//4 events as follows:
 	eventNames := []string{"music gig", "cinema", "football match", "olympics"}
@@ -74,8 +84,8 @@ func main() {
 	locationName := []string{"Wembly", "Odeon", "Madjeski Stadium", "London Olympic Track"}
 	locationAddress := []string{"London", "Guildford", "Reading", "East London"}
 	locationCountry := []string{"UK", "UK", "UK", "UK"}
-	locationOpenTime := []int{12, 14, 15, 12}
-	locationCloseTime := []int{23, 17, 17, 23}
+	locationOpenTime := []string{"12:30", "14:20", "15:10", "12:00"}
+	locationCloseTime := []string{"23:00", "17:00", "17:00", "23:00"}
 	locationHallsEvent1 := []Hall{{"Wembly east", "Gate 12", 6000}, {"Wembly south east", "Gate 13", 7000}}
 	locationHallsEvent2 := []Hall{{"Screen 1", "Guildford Odeon", 300}, {"Screen 2", "Guildford Odeon", 300}}
 	locationHallsEvent3 := []Hall{{"East Stand", "Gate 1", 3000}, {"South Stand", "Gate 2", 5000}}
@@ -103,6 +113,17 @@ func main() {
 				{eventStartDates[3], eventIDsBytes[3], 3}*/},
 		},
 	}
+	adminUsers := []AdminUser{
+		{bson.NewObjectId(), "James", "Roberts", "jamesrobs@yahoo.co.uk", "james11", "Apple", []Event{
+			/*
+				{eventStartDates[0], eventIDsBytes[0], 2},
+				{eventStartDates[1], eventIDsBytes[1], 3}*/},
+		},
+		{bson.NewObjectId(), "Mark", "Blake", "markblake4@hotmail.com", "mblake2", "Google", []Event{ /*
+				{eventStartDates[2], eventIDsBytes[2], 2}*/},
+		},
+	}
+
 	for i := 0; i < len(eventNames); i++ {
 		var event Event
 		event.ID = eventIDs[i]
@@ -164,7 +185,7 @@ func main() {
 		fmt.Fprintf(fo, string(data[:]))
 
 	}
-	//create some users with booking
+	//create some users
 	for i := 0; i < len(users); i++ {
 		data, err := json.Marshal(users[i])
 		if err != nil {
@@ -183,6 +204,25 @@ func main() {
 		fmt.Fprintf(fo, string(data[:]))
 
 	}
+	//create some admin users
+	for i := 0; i < len(adminUsers); i++ {
+		data, err := json.Marshal(adminUsers[i])
+		if err != nil {
+			fmt.Println("error:", err)
+		}
+		name := "adminuser"
+		num := strconv.Itoa(i)
+		name += num + ".json"
+		//name = append(name, num)
+
+		fo, errf := os.Create(name)
+		if errf != nil {
+			panic(err)
+		}
+		defer fo.Close()
+		fmt.Fprintf(fo, string(data[:]))
+	}
+
 	//this just writes whole json to stdout as well
 	b, err := json.Marshal(events)
 	if err != nil {
