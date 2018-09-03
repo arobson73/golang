@@ -14,4 +14,11 @@ export interface Booking {
     Seats: number;
     Date:number;
     EventID:string;
+    Name:string;
+}
+
+export interface Hall {
+    Name:string;
+    Location:string;
+    Capacity:number;
 }
